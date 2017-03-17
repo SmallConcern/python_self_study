@@ -61,3 +61,7 @@ class TestWordChains(object):
         wc = WordChains(get_word_set_from_dict())
         assert set.difference(set(["casey", "case", "pase", "pale", "spale", "spall", "small"]) -
                                 set(wc.find_word_chain("casey", "small"))) == set()
+
+    def test_demo(self):
+        wc = WordChains(get_word_set_from_dict())
+        print wc.find_word_chain("oliver", "luna")

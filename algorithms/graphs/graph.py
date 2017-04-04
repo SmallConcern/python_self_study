@@ -1,68 +1,67 @@
+from collections import deque
 
+graph = {'A': {'B', 'C'},
+         'B': {'A', 'D', 'E'},
+         'C': {'A', 'F'},
+         'D': {'B'},
+         'E': {'B', 'F'},
+         'F': {'C', 'E'}}
 
-graph = {'A': ['B', 'C'],
-		'B': ['D', 'C'],
-		'C': ['D'],
-		'D': ['E'],
-		'E': ['F'],
-		'F': ['A']}
 
 def bfs(graph, start):
-	path = []
-	queue = [start]
-	while queue:
-		node = queue.pop(0)
-		if node not in path:
-			path = path + [node]
-			queue = graph[node] + queue
-	return path
+    visited, queue = set(), deque([start])
+    while queue:
+        node = queue.popleft()
+        if node not in visited:
+            visited.add(node)
+            queue.extend(graph[node] - visited)
+    return visited
+
+
+def bfs_path(graph, start, goal):
+    queue = [(start, [start])]
+    while queue:
+        vertex, path = queue.pop(0)
+        for next in graph[vertex] - set(path):
+            if next == goal:
+                return path + [next]
+            else:
+                queue.append((next, path + [next]))
+
 
 def dfs(graph, start):
-	path = []
-	stack = [start]
-	while stack:
-		node = stack.pop(0)
-		if node not in path:
-			path = path + [node]
-			stack = stack + graph[node]
-	return path
+    visited, stack = set(), [start]
+    while stack:
+        vertex = stack.pop()
+        if vertex not in visited:
+            visited.add(vertex)
+            stack.extend(graph[vertex] - visited)
+    return visited
 
-def recursive_dfs(graph, start, path=[]):
-	path = path + [start]
-	for node in graph[start]:
-		if not node in path:
-			path = recursive_dfs(graph, node, path)
-	return path
 
-def find_path(graph, start, end, path=[]):
-	path = path + [start]
-	if start == end:
-		return path
-	if not graph.has_key(start):
-		return None
-	for node in graph[start]:
-		if node not in path:
-			new_path = find_path(graph, node, end, path)
-			if new_path:
-				return new_path
+def dfs_r(graph, start, visited=None):
+    if visited is None:
+        visited = set()
+    visited.add(start)
+    for vertex in graph[start] - visited:
+        dfs_r(graph, vertex, visited)
+    return visited
 
-def find_all_paths(graph, start, end, path=[]):
-	path = path + [start]
-	if start == end:
-		return [path]
-	if not graph.has_key(start):
-		return []
-	paths = []
-	for node in graph[start]:
-		if node not in path:
-			paths += find_all_paths(graph, node, end, path)
-	return paths
 
-def print_paths(paths):
-	for path in paths:
-		print "-->".join(path)
+def dfs_path(graph, start, end):
+    stack = [(start, [start])]
+    while stack:
+        vertex, path = stack.pop()
+        for next in graph[vertex] - set(path):
+            if next == end:
+                return path + [next]
+            else:
+                stack.append((next, path + [next]))
 
-print dfs(graph, 'A')
-print bfs(graph, 'A')
-print recursive_dfs(graph, 'A')
+
+print "DFS: {}".format(dfs(graph, 'A'))
+print "DFS_R: {}".format(dfs_r(graph, 'A'))
+print "DFS Paths A->F: {}".format(dfs_path(graph, 'A', 'F'))
+print "BFS: {}".format(bfs(graph, 'A'))
+print "BFS Paths A->F: {}".format(bfs_path(graph, 'A', 'F'))
 

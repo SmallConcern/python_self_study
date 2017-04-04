@@ -2,7 +2,7 @@ import random
 
 def quick_sort(items):
     if len(items) > 1:
-        pivot_index = len(items) /2
+        pivot_index = len(items)/2
         smaller_items = []
         larger_items = []
 

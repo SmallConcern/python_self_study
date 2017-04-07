@@ -40,6 +40,23 @@ class HashTable(object):
                     break
                 current = current.next
 
+        def remove(self, key):
+            hash_val = self.hash(key)
+            slot_node = self.slots[hash_val]
+            previous_node = None
+            found_item = False
+            while slot_node and not found_item:
+                if slot_node.key == key:
+                    if previous_node:
+                        previous_node.next = slot_node.next
+                    else:
+                        self.slots[hash_val] = slot_node.next
+                    found_item = True
+                else:
+                    slot_node = slot_node.next
+            if not found_item:
+                raise KeyError("Key {} is not present in HashTable".format(key))
+
     def hash(self, key):
         s = sum([(idx+1)*ord(char) for idx, char in enumerate(key)])
         return s%self.size
